@@ -1,0 +1,25 @@
+{
+    "name": "landofcoder/module-product-reviews-graphql",
+    "description": "Magento 2 Advanced Product Reviews GraphQl extension",
+    "type": "magento2-module",
+    "license": "OSL-3.0",
+    "authors": [
+        {
+            "name": "landofcoder",
+            "email": "info@landofcoder.com",
+            "homepage": "https://landofcoder.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "version": "1.0.0",
+    "require": {
+    },
+    "autoload": {
+        "psr-4": {
+            "Lof\\ProductReviewsGraphQl\\": ""
+        },
+        "files": [
+            "registration.php"
+        ]
+    }
+}
