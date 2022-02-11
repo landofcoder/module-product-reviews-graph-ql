@@ -15,3 +15,70 @@
 # @package     Lof_ProductReviewsGraphQl
 # @copyright   Copyright (c) 2022 Landofcoder (https://landofcoder.com/)
 # @license     https://landofcoder.com/LICENSE.txt
+
+
+type ProductReview {
+    reply: [ReviewReply] @doc(description: "An array of review reply") @resolver(class: "Lof\\ProductReviewsGraphQl\\Model\\Resolver\\Product\\Review\\Reply")
+    customize: ReviewCustomize @doc(description: "An object of review customize") @resolver(class: "Lof\\ProductReviewsGraphQl\\Model\\Resolver\\Product\\Review\\Customize")
+    galleries: ReviewGallery @doc(description: "An object of review gallery") @resolver(class: "Lof\\ProductReviewsGraphQl\\Model\\Resolver\\Product\\Review\\Gallery")
+
+}
+
+type ReviewReply {
+    reply_id: Int @doc(description: "Id of reply")
+    review_id: Int @doc(description: "Id of review reply")
+    reply_title: String @doc(description: "title field")
+    reply_comment: String @doc(description: "comment field")
+    user_name: String @doc(description: "user_name filed")
+    parent_reply_id: Int @doc(description: "Id of parent_reply_id")
+    website: String @doc(description: "website filed")
+    avatar_url: String @doc(description: "avatar_url filed")
+    created_at: String @doc(description: "created_at filed")
+}
+
+type ReviewCustomize {
+    advantages: String @doc(description: "advantages of reply")
+    disadvantages: String @doc(description: "disadvantages of reply")
+    review_id: Int @doc(description: "Review Id of review reply")
+    average: Int @doc(description: "average field")
+    count_helpful: Int @doc(description: "count_helpful field")
+    count_unhelpful: Int @doc(description: "count_unhelpful filed")
+    total_helpful: Int @doc(description: "total_helpful filed")
+    report_abuse: String @doc(description: "report_abuse filed")
+}
+
+type ReviewGallery {
+    id: Int @doc(description: "Id of reply")
+    review_id: Int @doc(description: "Id of review reply")
+    label: String @doc(description: "title field")
+    images: [String] @doc(description: "gallery images field")
+}
+
+type Mutation {
+    createProductReviewReply(input: CreateProductReviewReplyInput!): CreateProductReviewReplyOutput! @doc(description: "Creates a product review reply for a review of product") @resolver(class: "Lof\\ProductReviewsGraphQl\\Model\\Resolver\\CreateProductReviewReply")
+}
+
+type CreateProductReviewReplyOutput {
+    reply: ReviewReply! @doc(description: "Contains the completed product review reply")
+}
+
+input CreateProductReviewReplyInput {
+    parent_reply_id: Int @doc(description: "Id of parent_reply_id")
+    review_id: Int! @doc(description: "review_id field")
+    reply_title: String @doc(description: "reply_title field")
+    reply_comment: String! @doc(description: "reply_comment field")
+    user_name: String @doc(description: "user_name field")
+    website: String @doc(description: "website field")
+    email_address: String @doc(description: "email_address field")
+}
+
+input CreateProductReviewInput {
+    email: String @doc(description: "The Email of the reviewed product")
+    advantages: String @doc(description: "The advantages for product review")
+    disadvantages: String @doc(description: "The disadvantages for product review")
+    images: [ReviewGalleryImageInput] @doc(description: "The gallery image for product review")
+}
+
+input ReviewGalleryImageInput {
+    src: String @doc(description: "The Email of the reviewed product")
+}
