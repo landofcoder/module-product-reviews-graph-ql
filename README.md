@@ -39,5 +39,8 @@ magento 2 product reviews graphql extension
 - Refactor Graphql queries
 - Refactor Resolvers
 - Add documendation for Graphql queries
+- Override create product review with extra fields: customize, gallery images
+- Complete query resolvers
+- Complete create product review reply resolvers
 
 ## Queries
