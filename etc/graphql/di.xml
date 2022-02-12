@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\StoreGraphQl\Model\Resolver\Store\StoreConfigDataProvider">
+        <arguments>
+            <argument name="extendedConfigData" xsi:type="array">
+                <item name="lof_reviews_enabled" xsi:type="string">lof_product_reviews/lof_general_settings/enabled_module</item>
+                <item name="lof_reviews_show_on_customer_dashboard" xsi:type="string">lof_product_reviews/lof_general_settings/show_on_customer_dashboard</item>
+                <item name="lof_reviews_verify_purchased_code" xsi:type="string">lof_product_reviews/lof_review_settings/verify_purchased_code</item>
+                <item name="lof_reviews_required_verify_purchased" xsi:type="string">lof_product_reviews/lof_review_settings/required_verify_purchased</item>
+                <item name="lof_reviews_enable_auto_verify" xsi:type="string">lof_product_reviews/lof_review_settings/enable_auto_verify</item>
+                <item name="lof_reviews_enable_sorting" xsi:type="string">lof_product_reviews/lof_review_settings/enable_sorting</item>
+                <item name="lof_reviews_sort_type" xsi:type="string">lof_product_reviews/lof_review_settings/sort_type</item>
+                <item name="lof_reviews_enable_search" xsi:type="string">lof_product_reviews/lof_review_settings/enable_search</item>
+                <item name="lof_reviews_enable_pros_cons" xsi:type="string">lof_product_reviews/lof_review_settings/enable_pros_cons</item>
+                <item name="lof_reviews_enable_admin_reply" xsi:type="string">lof_product_reviews/lof_review_settings/enable_admin_reply</item>
+                <item name="lof_reviews_allow_upload" xsi:type="string">lof_product_reviews/lof_review_settings/allow_upload</item>
+                <item name="lof_reviews_limit_upload_image" xsi:type="string">lof_product_reviews/lof_review_settings/limit_upload_image</item>
+                <item name="lof_reviews_image_width" xsi:type="string">lof_product_reviews/lof_review_settings/image_width</item>
+                <item name="lof_reviews_image_height" xsi:type="string">lof_product_reviews/lof_review_settings/image_height</item>
+            </argument>
+        </arguments>
+    </type>
+</config>

@@ -18,7 +18,7 @@
 
 
 type ProductReview {
-    reply: [ReviewReply] @doc(description: "An array of review reply") @resolver(class: "Lof\\ProductReviewsGraphQl\\Model\\Resolver\\Product\\Review\\Reply")
+    reply: ReviewReplies @doc(description: "An array of review reply") @resolver(class: "Lof\\ProductReviewsGraphQl\\Model\\Resolver\\Product\\Review\\Reply")
     customize: ReviewCustomize @doc(description: "An object of review customize") @resolver(class: "Lof\\ProductReviewsGraphQl\\Model\\Resolver\\Product\\Review\\Customize")
     galleries: ReviewGallery @doc(description: "An object of review gallery") @resolver(class: "Lof\\ProductReviewsGraphQl\\Model\\Resolver\\Product\\Review\\Gallery")
 
@@ -54,8 +54,24 @@ type ReviewGallery {
     images: [String] @doc(description: "gallery images field")
 }
 
+type Query {
+    productReviewReplies(
+       filter: ReviewReplyFilterInput @doc(description: "Identifies which question attributes to search for and return."),
+       pageSize: Int = 5 @doc(description: "Specifies the maximum number of results to return at once. This attribute is optional."),
+       currentPage: Int = 1 @doc(description: "Specifies which page of results to return. The default value is 1."),
+       sort: ReviewReplySortInput @doc(description: "Specifies which attributes to sort on, and whether to return the results in ascending or descending order.")
+   ):ReviewReplies @resolver(class: "\\Lof\\ProductReviewsGraphQl\\Model\\Resolver\\Product\Review\Replies") @doc(description: "The seller query searches for sellers that match the criteria specified in the search and filter attributes")
+}
+
 type Mutation {
     createProductReviewReply(input: CreateProductReviewReplyInput!): CreateProductReviewReplyOutput! @doc(description: "Creates a product review reply for a review of product") @resolver(class: "Lof\\ProductReviewsGraphQl\\Model\\Resolver\\CreateProductReviewReply")
+}
+
+type ReviewReplies {
+    total_count: Int @doc(description: "The number of items returned")
+    items: [ReviewReply] @doc(description: "An array of items that match the specified search criteria")
+    page_info: SearchResultPageInfo @doc(description: "An object that includes the page_info and currentPage values specified in the query.")
+    sort_fields: SortFields @doc(description: "An object that includes the default sort field and all available sort fields.") @resolver(class: "Lof\\ProductReviewsGraphQl\\Model\\Resolver\\Product\\Review\\Reply\\SortFields")
 }
 
 type CreateProductReviewReplyOutput {
@@ -81,4 +97,27 @@ input CreateProductReviewInput {
 
 input ReviewGalleryImageInput {
     src: String @doc(description: "The Email of the reviewed product")
+}
+
+enum ReviewSortingType {
+    default
+    helpful
+    rating
+}
+
+type StoreConfig @doc(description: "The type contains information about a store config") {
+    lof_reviews_enabled : String @doc(description: "Indicates whether product reviews are enabled. Possible values: 1 (Yes) and 0 (No)")
+    lof_reviews_show_on_customer_dashboard : String @doc(description: "Indicates whether Show advanced reviews on customer dashboard. Possible values: 1 (Yes) and 0 (No)")
+    lof_reviews_verify_purchased_code : String @doc(description: "Indicates whether allow verify purchased code before review. Possible values: 1 (Yes) and 0 (No)")
+    lof_reviews_required_verify_purchased : String @doc(description: "Indicates whether require verify purchased code before review. Possible values: 1 (Yes) and 0 (No)")
+    lof_reviews_enable_auto_verify : String @doc(description: "Indicates whether auto verify purchase code. Possible values: 1 (Yes) and 0 (No)")
+    lof_reviews_enable_sorting : String @doc(description: "Indicates whether show sorting. Possible values: 1 (Yes) and 0 (No)")
+    lof_reviews_sort_type : ReviewSortingType @doc(description: "Indicates whether sorting type. Enum Values: default, helpful, rating")
+    lof_reviews_enable_search : String @doc(description: "Indicates whether show search. Possible values: 1 (Yes) and 0 (No)")
+    lof_reviews_enable_pros_cons : String @doc(description: "Indicates whether show pros and cons. Possible values: 1 (Yes) and 0 (No)")
+    lof_reviews_enable_admin_reply : String @doc(description: "Indicates whether show admin reply. Possible values: 1 (Yes) and 0 (No)")
+    lof_reviews_allow_upload : String @doc(description: "Indicates whether allow upload images for ratings. Possible values: 1 (Yes) and 0 (No)")
+    lof_reviews_limit_upload_image : Int @doc(description: "Indicates whether limit maximum images can uploading. Number value")
+    lof_reviews_image_width : Int @doc(description: "Indicates whether image width. Number value")
+    lof_reviews_image_height : Int @doc(description: "Indicates whether image height. Number value")
 }
