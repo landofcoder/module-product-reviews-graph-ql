@@ -18,7 +18,7 @@ use Lof\ProductReviews\Model\ReviewReply;
  */
 class ReplyDataProvider
 {
-    const DEFAULT_PAGE_SIZE = 10;
+    const DEFAULT_PAGE_SIZE = 5;
 
     /**
      * @var ReviewReplyCollectionFactory

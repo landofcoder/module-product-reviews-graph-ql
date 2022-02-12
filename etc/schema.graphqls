@@ -56,11 +56,12 @@ type ReviewGallery {
 
 type Query {
     productReviewReplies(
-       filter: ReviewReplyFilterInput @doc(description: "Identifies which question attributes to search for and return."),
-       pageSize: Int = 5 @doc(description: "Specifies the maximum number of results to return at once. This attribute is optional."),
-       currentPage: Int = 1 @doc(description: "Specifies which page of results to return. The default value is 1."),
-       sort: ReviewReplySortInput @doc(description: "Specifies which attributes to sort on, and whether to return the results in ascending or descending order.")
-   ):ReviewReplies @resolver(class: "\\Lof\\ProductReviewsGraphQl\\Model\\Resolver\\Product\Review\Replies") @doc(description: "The seller query searches for sellers that match the criteria specified in the search and filter attributes")
+        review_id: Int! @doc(description: "filter by review id."),
+        filter: ReviewReplyFilterInput @doc(description: "Identifies which question attributes to search for and return."),
+        pageSize: Int = 5 @doc(description: "Specifies the maximum number of results to return at once. This attribute is optional."),
+        currentPage: Int = 1 @doc(description: "Specifies which page of results to return. The default value is 1."),
+        sort: ReviewReplySortInput @doc(description: "Specifies which attributes to sort on, and whether to return the results in ascending or descending order.")
+   ):ReviewReplies @resolver(class: "\\Lof\\ProductReviewsGraphQl\\Model\\Resolver\\Product\\Review\\Replies") @doc(description: "The seller query searches for sellers that match the criteria specified in the search and filter attributes")
 }
 
 type Mutation {
@@ -97,6 +98,28 @@ input CreateProductReviewInput {
 
 input ReviewGalleryImageInput {
     src: String @doc(description: "The Email of the reviewed product")
+}
+
+input ReviewReplyFilterInput  @doc(description: "ReviewReplyFilterInput defines the filters to be used in the search. A filter contains at least one attribute, a comparison operator, and the value that is being searched for.")
+{
+    reply_id: FilterTypeInput @deprecated(reason: "Filter reply_id)
+    review_id: FilterEqualTypeInput @deprecated(reason: "Filter review_id")
+    reply_title: FilterTypeInput @deprecated(reason: "Filter reply_title")
+    reply_comment: FilterMatchTypeInput @deprecated(reason: "Filter reply_comment")
+    user_name: FilterTypeInput @deprecated(reason: "Filter user_name")
+    parent_reply_id: FilterTypeInput @deprecated(reason: "Filter parent_reply_id)
+    created_at: FilterTypeInput @deprecated(reason: "Filter created_at")
+    or: ReviewReplyFilterInput @doc(description: "The keyword required to perform a logical OR comparison")
+}
+
+input ReviewReplySortInput @doc(description: "ReviewReplySortInput specifies the attribute to use for sorting search results and indicates whether the results are sorted in ascending or descending delivery persons. It's possible to sort delivery persons using searchable attributes with enabled 'Use in Filter Options' option")
+{
+    reply_id: SortEnum @doc(description: "Sort by the reply_id.")
+    review_id: SortEnum @doc(description: "Sort by the review_id.")
+    reply_title: SortEnum @doc(description: "Sort by the reply_title.")
+    user_name: SortEnum @doc(description: "Sort by the user_name.")
+    parent_reply_id: SortEnum @doc(description: "Sort by the parent_reply_id.")
+    created_at: SortEnum @doc(description: "Sort by the created_at (default).")
 }
 
 enum ReviewSortingType {
