@@ -4,7 +4,7 @@
     <type name="Magento\Framework\GraphQl\Query\Resolver\Argument\FieldEntityAttributesPool">
         <arguments>
             <argument name="attributesInstances" xsi:type="array">
-                <item name="productReviewReplies" xsi:type="object">Lof\ProductReviewsGraphQl\Model\ProductReviewReply\RepliesFilterAttributesForAst</item>
+                <item name="productReviewReplies" xsi:type="object">Lof\ProductReviewsGraphQl\Model\ProductReviewComment\RepliesFilterAttributesForAst</item>
             </argument>
         </arguments>
     </type>

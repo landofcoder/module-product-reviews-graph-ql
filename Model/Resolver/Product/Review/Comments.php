@@ -22,7 +22,7 @@ use Magento\Framework\GraphQl\Query\Resolver\Argument\SearchCriteria\Builder as 
 use Magento\Framework\GraphQl\Query\Resolver\Argument\SearchCriteria\ArgumentApplier\Filter;
 use Lof\DeliverProductReviews\Api\ReviewRepositoryInterface;
 
-class Replies implements ResolverInterface
+class Comments implements ResolverInterface
 {
 
     /**

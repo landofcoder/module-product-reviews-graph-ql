@@ -23,7 +23,7 @@ use Magento\Store\Api\Data\StoreInterface;
 /**
  * Create product review reply resolver
  */
-class CreateProductReviewReply implements ResolverInterface
+class CreateProductReviewComment implements ResolverInterface
 {
     /**
      * @var ReviewHelper

@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Lof\ProductReviewsGraphQl\Model\ProductReviewReply;
+namespace Lof\ProductReviewsGraphQl\Model\ProductReviewComment;
 
 use Magento\Framework\GraphQl\ConfigInterface;
 use Magento\Framework\GraphQl\Query\Resolver\Argument\FieldEntityAttributesInterface;

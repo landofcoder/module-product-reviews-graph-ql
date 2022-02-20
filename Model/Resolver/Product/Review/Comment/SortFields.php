@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Lof\ProductReviewsGraphQl\Model\Resolver\Product\Review\Reply;
+namespace Lof\ProductReviewsGraphQl\Model\Resolver\Product\Review\Comment;
 
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\Framework\GraphQl\Config\Element\Field;

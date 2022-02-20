@@ -16,70 +16,105 @@
 # @copyright   Copyright (c) 2022 Landofcoder (https://landofcoder.com/)
 # @license     https://landofcoder.com/LICENSE.txt
 
-
-type ProductReview {
-    reply: ReviewReplies @doc(description: "An array of review reply") @resolver(class: "Lof\\ProductReviewsGraphQl\\Model\\Resolver\\Product\\Review\\Reply")
-    customize: ReviewCustomize @doc(description: "An object of review customize") @resolver(class: "Lof\\ProductReviewsGraphQl\\Model\\Resolver\\Product\\Review\\Customize")
-    galleries: ReviewGallery @doc(description: "An object of review gallery") @resolver(class: "Lof\\ProductReviewsGraphQl\\Model\\Resolver\\Product\\Review\\Gallery")
-
+interface ProductInterface {
+    advreview(
+        search: String @doc(description: "search by keyword."),
+        pageSize: Int = 20 @doc(description: "Specifies the maximum number of results to return at once."),
+        currentPage: Int = 1 @doc(description: "Specifies which page of results to return."),
+        sortBy: ReviewSortingType = default @doc(description: "sorting by: helpful, rating, latest, oldest, recommended, verified, default."),
+    ): ReviewsData! @doc(description: "The list of products advanced reviews.") @resolver(class: "Lof\\ProductReviewsGraphQl\\Model\\Resolver\\Product\\Reviews")
 }
 
-type ReviewReply {
-    reply_id: Int @doc(description: "Id of reply")
-    review_id: Int @doc(description: "Id of review reply")
-    reply_title: String @doc(description: "title field")
-    reply_comment: String @doc(description: "comment field")
-    user_name: String @doc(description: "user_name filed")
-    parent_reply_id: Int @doc(description: "Id of parent_reply_id")
-    website: String @doc(description: "website filed")
-    avatar_url: String @doc(description: "avatar_url filed")
-    created_at: String @doc(description: "created_at filed")
+type ReviewsData {
+    totalRecords: Int @doc(description: "The average of all the ratings given to the product.")
+    ratingSummary: Float! @doc(description: "The average of all the ratings given to the product.")
+    ratingSummaryValue: Float! @doc(description: "The average of all the ratings value given to the product.")
+    recomendedPercent: Float @doc(description: "The percent of ratings.")
+    totalRecordsFiltered: Int @doc(description: "The totals of filtered records.")
+    detailedSummary: DetailedSummary @doc(description: "details of review summary.")
+    items: [Review]! @doc(description: "An array of product reviews.")
+    page_info: SearchResultPageInfo @doc(description: "An object that includes the page_info and currentPage values specified in the query.")
 }
 
-type ReviewCustomize {
-    advantages: String @doc(description: "advantages of reply")
-    disadvantages: String @doc(description: "disadvantages of reply")
-    review_id: Int @doc(description: "Review Id of review reply")
-    average: Int @doc(description: "average field")
-    count_helpful: Int @doc(description: "count_helpful field")
-    count_unhelpful: Int @doc(description: "count_unhelpful filed")
-    total_helpful: Int @doc(description: "total_helpful filed")
-    report_abuse: String @doc(description: "report_abuse filed")
+type Review @doc(description: "Details of a product review") {
+    review_id: Int! @doc(description: "review_id field.")
+    created_at: String @doc(description: "created_at field.")
+    answer: String @doc(description: "answer field.")
+    verified_buyer: Int @doc(description: "verified_buyer field.")
+    is_recommended: Bool @doc(description: "is_recommended field.")
+    detail_id: Int @doc(description: "detail_id field.")
+    title: String @doc(description: "title field.")
+    detail: String @doc(description: "detail field.")
+    nickname: String @doc(description: "nickname field.")
+    like_about: String @doc(description: "like_about field.")
+    not_like_about: String @doc(description: "not_like_about field.")
+    guest_email: String @doc(description: "guest_email field.")
+    plus_review: Int @doc(description: "plus_review field.")
+    minus_review: Int @doc(description: "plus_review field.")
+    rating_votes: RatingVote @doc(description: "rating_votes field.")
+    images: [Images] @doc(description: "images field.")
+    comments: [Comment] @doc(description: "review comment, review reply list, field.")
 }
 
-type ReviewGallery {
-    id: Int @doc(description: "Id of reply")
-    review_id: Int @doc(description: "Id of review reply")
-    label: String @doc(description: "title field")
-    images: [String] @doc(description: "gallery images field")
+type Images {
+    full_path: String @doc(description: "full_path field.")
+    resized_path: String @doc(description: "resized_path field.")
+}
+
+type Comment {
+    id: Int @doc(@description: "comment id, reply id")
+    review_id: Int @doc(@description: "review_id field")
+    message: String @doc(@description: "message field")
+    nickname: String @doc(@description: "nickname field")
+    email: String @doc(@description: "email field")
+    created_at: String @doc(@description: "created_at field")
+    updated_at: String @doc(@description: "updated_at field")
+}
+
+type RatingVote {
+    vote_id: Int! @doc(description: "vote_id field.")
+    rating_id: Int! @doc(description: "rating_id field.")
+    option_id: Int @doc(description: "option_id field.")
+    review_id: Int @doc(description: "review_id field.")
+    percent: Int @doc(description: "percent field.")
+    value: Int @doc(description: "value field.")
+    rating_code: String @doc(description: "rating_code field.")
+}
+
+type DetailedSummary {
+    one: Int! @doc(description: "the total of rating one.")
+    two: Int! @doc(description: "the total of rating two.")
+    three: Int! @doc(description: "the total of rating three.")
+    four: Int! @doc(description: "the total of rating four.")
+    five: Int! @doc(description: "the total of rating five.")
+}
+
+type ReviewComments {
+    total_count: Int @doc(description: "The number of items returned")
+    items: [Comment] @doc(description: "An array of items that match the specified search criteria")
+    page_info: SearchResultPageInfo @doc(description: "An object that includes the page_info and currentPage values specified in the query.")
+    sort_fields: SortFields @doc(description: "An object that includes the default sort field and all available sort fields.") @resolver(class: "Lof\\ProductReviewsGraphQl\\Model\\Resolver\\Product\\Review\\Comment\\SortFields")
 }
 
 type Query {
-    productReviewReplies(
+    reviewComments(
         review_id: Int! @doc(description: "filter by review id."),
-        filter: ReviewReplyFilterInput @doc(description: "Identifies which question attributes to search for and return."),
+        filter: ReviewCommentFilterInput @doc(description: "Identifies which question attributes to search for and return."),
         pageSize: Int = 5 @doc(description: "Specifies the maximum number of results to return at once. This attribute is optional."),
         currentPage: Int = 1 @doc(description: "Specifies which page of results to return. The default value is 1."),
-        sort: ReviewReplySortInput @doc(description: "Specifies which attributes to sort on, and whether to return the results in ascending or descending order.")
-   ):ReviewReplies @resolver(class: "\\Lof\\ProductReviewsGraphQl\\Model\\Resolver\\Product\\Review\\Replies") @doc(description: "The seller query searches for sellers that match the criteria specified in the search and filter attributes")
+        sort: ReviewCommentSortInput @doc(description: "Specifies which attributes to sort on, and whether to return the results in ascending or descending order.")
+   ):ReviewComments @resolver(class: "\\Lof\\ProductReviewsGraphQl\\Model\\Resolver\\Product\\Review\\Comments") @doc(description: "The seller query searches for sellers that match the criteria specified in the search and filter attributes")
 }
 
 type Mutation {
-    createProductReviewReply(input: CreateProductReviewReplyInput!): CreateProductReviewReplyOutput! @doc(description: "Creates a product review reply for a review of product") @resolver(class: "Lof\\ProductReviewsGraphQl\\Model\\Resolver\\CreateProductReviewReply")
+    createProductReviewComment(input: CreateProductReviewCommentInput!): CreateProductReviewCommentOutput! @doc(description: "Creates a product review reply for a review of product") @resolver(class: "Lof\\ProductReviewsGraphQl\\Model\\Resolver\\CreateProductReviewComment")
 }
 
-type ReviewReplies {
-    total_count: Int @doc(description: "The number of items returned")
-    items: [ReviewReply] @doc(description: "An array of items that match the specified search criteria")
-    page_info: SearchResultPageInfo @doc(description: "An object that includes the page_info and currentPage values specified in the query.")
-    sort_fields: SortFields @doc(description: "An object that includes the default sort field and all available sort fields.") @resolver(class: "Lof\\ProductReviewsGraphQl\\Model\\Resolver\\Product\\Review\\Reply\\SortFields")
+type CreateProductReviewCommentOutput {
+    comment: Comment! @doc(description: "Contains the completed product review comment")
 }
 
-type CreateProductReviewReplyOutput {
-    reply: ReviewReply! @doc(description: "Contains the completed product review reply")
-}
-
-input CreateProductReviewReplyInput {
+input CreateProductReviewCommentInput {
     parent_reply_id: Int @doc(description: "Id of parent_reply_id")
     review_id: Int! @doc(description: "review_id field")
     reply_title: String @doc(description: "reply_title field")
@@ -100,7 +135,7 @@ input ReviewGalleryImageInput {
     src: String @doc(description: "The Email of the reviewed product")
 }
 
-input ReviewReplyFilterInput  @doc(description: "ReviewReplyFilterInput defines the filters to be used in the search. A filter contains at least one attribute, a comparison operator, and the value that is being searched for.")
+input ReviewCommentFilterInput  @doc(description: "ReviewCommentFilterInput defines the filters to be used in the search. A filter contains at least one attribute, a comparison operator, and the value that is being searched for.")
 {
     reply_id: FilterTypeInput @deprecated(reason: "Filter reply_id)
     review_id: FilterEqualTypeInput @deprecated(reason: "Filter review_id")
@@ -109,10 +144,10 @@ input ReviewReplyFilterInput  @doc(description: "ReviewReplyFilterInput defines 
     user_name: FilterTypeInput @deprecated(reason: "Filter user_name")
     parent_reply_id: FilterTypeInput @deprecated(reason: "Filter parent_reply_id)
     created_at: FilterTypeInput @deprecated(reason: "Filter created_at")
-    or: ReviewReplyFilterInput @doc(description: "The keyword required to perform a logical OR comparison")
+    or: ReviewCommentFilterInput @doc(description: "The keyword required to perform a logical OR comparison")
 }
 
-input ReviewReplySortInput @doc(description: "ReviewReplySortInput specifies the attribute to use for sorting search results and indicates whether the results are sorted in ascending or descending delivery persons. It's possible to sort delivery persons using searchable attributes with enabled 'Use in Filter Options' option")
+input ReviewCommentSortInput @doc(description: "ReviewCommentSortInput specifies the attribute to use for sorting search results and indicates whether the results are sorted in ascending or descending delivery persons. It's possible to sort delivery persons using searchable attributes with enabled 'Use in Filter Options' option")
 {
     reply_id: SortEnum @doc(description: "Sort by the reply_id.")
     review_id: SortEnum @doc(description: "Sort by the review_id.")
@@ -126,6 +161,10 @@ enum ReviewSortingType {
     default
     helpful
     rating
+    latest
+    oldest
+    recommended
+    verified
 }
 
 type StoreConfig @doc(description: "The type contains information about a store config") {
