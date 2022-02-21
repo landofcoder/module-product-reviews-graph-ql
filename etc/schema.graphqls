@@ -74,6 +74,7 @@ type Comment {
     message: String @doc(description: "message field")
     nickname: String @doc(description: "nickname field")
     email: String @doc(description: "email field")
+    status: Int @doc(description: "status field")
     created_at: String @doc(description: "created_at field")
     updated_at: String @doc(description: "updated_at field")
 }

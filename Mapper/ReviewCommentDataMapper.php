@@ -32,6 +32,7 @@ class ReviewCommentDataMapper
             'message' => $reply->getReplyComment(),
             'nickname' => $reply->getUserName(),
             'email' => $reply->getEmailAddress(),
+            'status' => $reply->getStatus(),
             'created_at' => $reply->getCreatedAt(),
             'updated_at' => $reply->getUpdatedAt(),
             'model' => $reply

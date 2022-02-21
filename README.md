@@ -72,7 +72,7 @@ query {
                     four
                     five
                 }
-                item {
+                items {
                     __typename
                     review_id
                     created_at
@@ -140,6 +140,7 @@ query {
         message
         nickname
         email
+        parent_id
         created_at
         updated_at
       }
