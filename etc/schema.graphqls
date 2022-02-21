@@ -41,7 +41,7 @@ type Review @doc(description: "Details of a product review") {
     created_at: String @doc(description: "created_at field.")
     answer: String @doc(description: "answer field.")
     verified_buyer: Int @doc(description: "verified_buyer field.")
-    is_recommended: Bool @doc(description: "is_recommended field.")
+    is_recommended: Boolean @doc(description: "is_recommended field.")
     detail_id: Int @doc(description: "detail_id field.")
     title: String @doc(description: "title field.")
     detail: String @doc(description: "detail field.")
@@ -68,14 +68,14 @@ type Images {
 }
 
 type Comment {
-    id: Int @doc(@description: "comment id, reply id")
-    review_id: Int @doc(@description: "review_id field")
-    parent_id: Int @doc(@description: "parent_id field")
-    message: String @doc(@description: "message field")
-    nickname: String @doc(@description: "nickname field")
-    email: String @doc(@description: "email field")
-    created_at: String @doc(@description: "created_at field")
-    updated_at: String @doc(@description: "updated_at field")
+    id: Int @doc(description: "comment id, reply id")
+    review_id: Int @doc(description: "review_id field")
+    parent_id: Int @doc(description: "parent_id field")
+    message: String @doc(description: "message field")
+    nickname: String @doc(description: "nickname field")
+    email: String @doc(description: "email field")
+    created_at: String @doc(description: "created_at field")
+    updated_at: String @doc(description: "updated_at field")
 }
 
 type RatingVote {
@@ -105,22 +105,22 @@ type ReviewComments {
 
 type Query {
     comments(
-        review_id: Int! @doc(description: "filter by review id."),
-        filter: ReviewCommentFilterInput @doc(description: "Identifies which question attributes to search for and return."),
-        pageSize: Int = 5 @doc(description: "Specifies the maximum number of results to return at once. This attribute is optional."),
-        currentPage: Int = 1 @doc(description: "Specifies which page of results to return. The default value is 1."),
+        review_id: Int! @doc(description: "filter by review id.")
+        filter: ReviewCommentFilterInput @doc(description: "Identifies which question attributes to search for and return.")
+        pageSize: Int = 5 @doc(description: "Specifies the maximum number of results to return at once. This attribute is optional.")
+        currentPage: Int = 1 @doc(description: "Specifies which page of results to return. The default value is 1.")
         sort: ReviewCommentSortInput @doc(description: "Specifies which attributes to sort on, and whether to return the results in ascending or descending order.")
    ):ReviewComments @resolver(class: "\\Lof\\ProductReviewsGraphQl\\Model\\Resolver\\Product\\Review\\Comments") @doc(description: "The seller query searches for sellers that match the criteria specified in the search and filter attributes")
 }
 
 type Mutation {
-    createComment(input: CreateProductReviewCommentInput!): CreateProductReviewCommentOutput! @doc(description: "Creates a product review reply for a review of product") @resolver(class: "Lof\\ProductReviewsGraphQl\\Model\\Resolver\\CreateProductReviewComment")
+    createComment(input: CreateProductReviewCommentInput!): CreateProductReviewCommentOutput! @doc(description: "Creates a product review reply for a review of product") @resolver(class: "\\Lof\\ProductReviewsGraphQl\\Model\\Resolver\\CreateProductReviewComment")
 
-    likeReview(review_id: Int!): Boolean @doc(description: "Like a review by id") @resolver(class: "Lof\\ProductReviewsGraphQl\\Model\\Resolver\\LikeReview")
+    likeReview(review_id: Int!): Boolean @doc(description: "Like a review by id") @resolver(class: "\\Lof\\ProductReviewsGraphQl\\Model\\Resolver\\LikeReview")
 
-    unlikeReview(review_id: Int!): Boolean @doc(description: "Un Like a review by id") @resolver(class: "Lof\\ProductReviewsGraphQl\\Model\\Resolver\\UnLikeReview")
+    unlikeReview(review_id: Int!): Boolean @doc(description: "Un Like a review by id") @resolver(class: "\\Lof\\ProductReviewsGraphQl\\Model\\Resolver\\UnLikeReview")
 
-    reportReview(review_id: Int!): Boolean @doc(description: "Report a review by id") @resolver(class: "Lof\\ProductReviewsGraphQl\\Model\\Resolver\\ReportReview")
+    reportReview(review_id: Int!): Boolean @doc(description: "Report a review by id") @resolver(class: "\\Lof\\ProductReviewsGraphQl\\Model\\Resolver\\ReportReview")
 }
 
 type CreateProductReviewCommentOutput {
@@ -148,26 +148,24 @@ input ReviewGalleryImageInput {
     src: String @doc(description: "The Email of the reviewed product")
 }
 
-input ReviewCommentFilterInput  @doc(description: "ReviewCommentFilterInput defines the filters to be used in the search. A filter contains at least one attribute, a comparison operator, and the value that is being searched for.")
+input ReviewCommentFilterInput @doc(description: "ReviewCommentFilterInput defines the filters to be used in the search. A filter contains at least one attribute, a comparison operator, and the value that is being searched for.")
 {
-    reply_id: FilterTypeInput @deprecated(reason: "Filter reply_id)
-    review_id: FilterEqualTypeInput @deprecated(reason: "Filter review_id")
-    reply_title: FilterTypeInput @deprecated(reason: "Filter reply_title")
-    reply_comment: FilterMatchTypeInput @deprecated(reason: "Filter reply_comment")
-    user_name: FilterTypeInput @deprecated(reason: "Filter user_name")
-    parent_reply_id: FilterTypeInput @deprecated(reason: "Filter parent_reply_id)
-    created_at: FilterTypeInput @deprecated(reason: "Filter created_at")
+    id: FilterTypeInput @doc(description: "Filter id")
+    title: FilterTypeInput @doc(description: "Filter title")
+    nickname: FilterTypeInput @doc(description: "Filter nickname")
+    created_at: FilterTypeInput @doc(description: "Filter created_at")
     or: ReviewCommentFilterInput @doc(description: "The keyword required to perform a logical OR comparison")
 }
 
 input ReviewCommentSortInput @doc(description: "ReviewCommentSortInput specifies the attribute to use for sorting search results and indicates whether the results are sorted in ascending or descending delivery persons. It's possible to sort delivery persons using searchable attributes with enabled 'Use in Filter Options' option")
 {
-    reply_id: SortEnum @doc(description: "Sort by the reply_id.")
+    id: SortEnum @doc(description: "Sort by the id.")
     review_id: SortEnum @doc(description: "Sort by the review_id.")
-    reply_title: SortEnum @doc(description: "Sort by the reply_title.")
-    user_name: SortEnum @doc(description: "Sort by the user_name.")
-    parent_reply_id: SortEnum @doc(description: "Sort by the parent_reply_id.")
+    title: SortEnum @doc(description: "Sort by the title.")
+    nickname: SortEnum @doc(description: "Sort by the nickname.")
+    parent_id: SortEnum @doc(description: "Sort by the parent_id.")
     created_at: SortEnum @doc(description: "Sort by the created_at (default).")
+    updated_at: SortEnum @doc(description: "Sort by the updated_at.")
 }
 
 enum ReviewSortingType  @doc(description: "ReviewSortingType use for sorting advanced reviews, default sorting = default ") {

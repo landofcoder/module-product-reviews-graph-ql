@@ -188,8 +188,8 @@ class Comments implements ResolverInterface
     /**
      * mapping comment field
      *
-     * @param string $filterField
-     * @return string
+     * @param string|int $filterField
+     * @return string|int
      */
     protected function mappingCommentField($filterField)
     {

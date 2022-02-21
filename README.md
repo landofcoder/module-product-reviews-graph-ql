@@ -1,7 +1,6 @@
-# Mage2 Module Lof Lof_ProductReviewsGraphQl
+# Magento 2 Module Lof Lof_ProductReviewsGraphQl
 
-    ``landofcoder/module-product-reviews-graphql
-``
+``landofcoder/module-product-reviews-graphql``
 
  - [Main Functionalities](#markdown-header-main-functionalities)
  - [Installation](#markdown-header-installation)
@@ -36,195 +35,84 @@ magento 2 product reviews graphql extension
  - Flush the cache by running `php bin/magento cache:flush`
 
 ### TODO
-- Refactor Graphql queries
-- Refactor Resolvers
-- Add documendation for Graphql queries
-- Override create product review with extra fields: customize, gallery images
-- Complete query resolvers
-- Complete create product review reply resolvers
 
 ## Queries
 
-Fragment
-```
-fragment ProductPriceFragment on ProductPrice {
-  discount {
-    amount_off
-    percent_off
-  }
-  final_price {
-    currency
-    value
-  }
-  regular_price {
-    currency
-    value
-  }
-}
+1. Query get product advanced reviews
 
-fragment ProductDetailsFragment on ProductInterface {
-  __typename
-  categories {
-    id
-    breadcrumbs {
-      category_id
-    }
-  }
-  uid
-  url_key
-  color
-  rating_summary
-  price_range {
-    maximum_price {
-      ...ProductPriceFragment
-    }
-    minimum_price {
-      ...ProductPriceFragment
-    }
-  }
-  created_at
-  description {
-    html
-  }
-  id
-  media_gallery {
-    disabled
-    label
-    position
-    url
-  }
-  meta_description
-  name
-  price {
-    regularPrice {
-      amount {
-        currency
-        value
-      }
-    }
-  }
-  sku
-  stock_status
-  small_image {
-    url
-  }
-  image {
-    url
-  }
-  url_key
-  ... on ConfigurableProduct {
-    configurable_options {
-      attribute_code
-      attribute_id
-      id
-      label
-      values {
-        default_label
-        label
-        store_label
-        use_default_value
-        value_index
-        swatch_data {
-          ... on ImageSwatchData {
-            thumbnail
-          }
-          value
-        }
-      }
-    }
-    variants {
-      attributes {
-        code
-        value_index
-      }
-      product {
-        id
-        media_gallery_entries {
-          id
-          disabled
-          file
-          label
-          position
-        }
-        sku
-        stock_status
-        price {
-          regularPrice {
-            amount {
-              currency
-              value
-            }
-          }
-        }
-      }
-    }
-  }
-}
-```
-
-1. Query filter products with detail reviews information
+$urlKey : String - product url key
+$search : String - filter by keyword
+$pageSize : Int = 20 - page size
+$currentPage : Int = 1 - current page
+$sortBy : ReviewSortingType = default - enum: default, helpful, rating, latest, oldest, recommended, verified
 
 ```
 query {
-    products(filter: ProductAttributeFilterInput, sort: ProductAttributeSortInput, search: string) {
-        aggregations {
-            attribute_code
-            count
-            label
-            options {
-                count
-                label
-                value
-            }
-        }
-        sort_fields {
-            default
-            options {
-                label
-                value
-            }
-        }
-        total_count
+    products(filter: { url_key: { eq: $urlKey } }) {
         items {
-            ...ProductDetailsFragment
-            review_count
-            rating_summary
-            reviews {
-                items {
-                    average_rating
+            id
+            uid
+            advreview (
+                search: $search
+                pageSize: $pageSize
+                currentPage: $currentPage
+                sortBy: $sortBy
+            ) {
+                __typename
+                totalRecords
+                ratingSummary
+                ratingSummaryValue
+                recomendedPercent
+                totalRecordsFiltered
+                detailedSummary {
+                    __typename
+                    one
+                    two
+                    three
+                    four
+                    five
+                }
+                item {
+                    __typename
+                    review_id
                     created_at
+                    answer
+                    verified_buyer
+                    is_recommended
+                    detail_id
+                    title
+                    detail
                     nickname
-                    product {
-                        id
-                    }
-                    ratings_breakdown {
-                        name
+                    like_about
+                    not_like_about
+                    guest_email
+                    plus_review
+                    minus_review
+                    rating_votes {
+                        __typename
+                        vote_id
+                        option_id
+                        rating_id
+                        review_id
+                        percent
                         value
+                        rating_code
                     }
-                    summary
-                    text
-                    customize {
-                        advantages
-                        disadvantages
-                        average
-                        count_helpful
-                        count_unhelpful
-                        total_helpful
-                        report_abuse
+                    images {
+                        __typename
+                        full_path
+                        resized_path
                     }
-                    galleries {
+                    comments {
+                        __typename
                         id
-                        label
-                        images
-                    }
-                    reply {
-                        reply_id
-                        reply_title
-                        reply_comment
-                        user_name
-                        parent_reply_id
-                        website
+                        review_id
+                        status
+                        message
+                        nickname
+                        email
                         created_at
+                        updated_at
                     }
                 }
             }
@@ -233,41 +121,68 @@ query {
 }
 ```
 
-2. Query replies of review
+2. Query review comments of a review
 
 ```
 query {
-  productReviewReplies (
-        review_id: Int!,
-        filter: ReviewReplyFilterInput,
-        pageSize: Int = 5,
-        currentPage: Int = 1,
-        sort: ReviewReplySortInput
-    ) {
-        items {
-            reply_id
-            review_id
-            reply_title
-            reply_comment
-            user_name
-            parent_reply_id
-            website
-            created_at
-        }
-        total_count
-        page_info {
-            current_page
-            page_size
-            total_pages
-        }
-        sort_fields {
-            created_at: DESC
-        }
+  comments (
+    review_id: Int!
+    filter: ReviewCommentFilterInput
+    pageSize: Int = 5
+    currentPage: Int = 1
+    sort: ReviewCommentSortInput
+  ) {
+      items {
+        __typename
+        id
+        review_id
+        status
+        message
+        nickname
+        email
+        created_at
+        updated_at
+      }
+      total_count
+      page_info {
+          page_size
+          current_page
+          total_pages
+      }
+  }
+}
+```
+
+3. Mutation submit like a review
+
+```
+mutation {
+    likeReview (review_id : Int!) {
+        __typename
+    }
+}
+```
+4. Mutation submit unlike a review
+
+```
+mutation {
+    unlikeReview (review_id : Int!) {
+        __typename
     }
 }
 ```
 
-3. Mutation submit product review with extra information
+5. Mutation submit report a review
+
+```
+mutation {
+    reportReview (review_id : Int!) {
+        __typename
+    }
+}
+```
+
+6. Mutation submit product review with extra information
 
 ```
 mutation {
@@ -291,6 +206,7 @@ mutation {
             nickname
             product {
                 id
+                url_key
             }
             ratings_breakdown {
                 name
@@ -298,20 +214,35 @@ mutation {
             }
             summary
             text
-            customize {
-                advantages
-                disadvantages
-                average
-                count_helpful
-                count_unhelpful
-                total_helpful
-                report_abuse
-            }
-            galleries {
-                id
-                label
-                images
-            }
+        }
+    }
+}
+```
+
+7. Mutation post review comment
+
+```
+mutation {
+    createComment (
+        input : {
+            review_id: Int!
+            title: String
+            message: String!
+            nickname: String
+            email: String
+            parent_id: Int
+            website: String
+        }
+    ) {
+        comment {
+            id
+            review_id
+            status
+            message
+            nickname
+            email
+            created_at
+            updated_at
         }
     }
 }
