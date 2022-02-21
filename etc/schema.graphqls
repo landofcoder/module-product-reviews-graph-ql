@@ -51,7 +51,8 @@ type Review @doc(description: "Details of a product review") {
     guest_email: String @doc(description: "guest_email field.")
     plus_review: Int @doc(description: "plus_review field.")
     minus_review: Int @doc(description: "plus_review field.")
-    rating_votes: RatingVote @doc(description: "rating_votes field.")
+    report_abuse: Int @doc(description: "report_abuse field.")
+    rating_votes: [RatingVote] @doc(description: "rating_votes field.")
     images: [Images] @doc(description: "images field.")
     comments: [Comment] @doc(description: "review comment, review reply list, field.")
 }
@@ -80,7 +81,7 @@ type Comment {
 }
 
 type RatingVote {
-    vote_id: Int! @doc(description: "vote_id field.")
+    vote_id: Int @doc(description: "vote_id field.")
     rating_id: Int! @doc(description: "rating_id field.")
     option_id: Int @doc(description: "option_id field.")
     review_id: Int @doc(description: "review_id field.")

@@ -122,7 +122,7 @@ class CreateProductReviewComment implements ResolverInterface
         $input = $args['input'];
         $customerId = null;
 
-        if (empty($input['input']) || empty($input['input']['review_id']) || empty($input['input']['message'])) {
+        if (empty($input) || empty($input['review_id']) || empty($input['message'])) {
             throw new GraphQlInputException(__('Value must contain "input", input.review_id, input.message property.'));
         }
 
@@ -134,7 +134,7 @@ class CreateProductReviewComment implements ResolverInterface
             throw new GraphQlAuthorizationException(__('Guest customers aren\'t allowed to add product reviews.'));
         }
 
-        $replyData = $this->mappingReplyData($args["input"], $customerId);
+        $replyData = $this->mappingReplyData($input, $customerId);
 
         if ($customerId) {
             $customer = $this->getCustomer->execute($context);
@@ -158,11 +158,11 @@ class CreateProductReviewComment implements ResolverInterface
         $replyData = $this->dataReplyFactory->create();
         $replyData->setReviewId(isset($args["review_id"]) ? (int)$args["review_id"] : 0);
         $replyData->setParentReplyId(isset($args["parent_id"]) ? (int)$args["parent_id"] : 0);
-        $replyData->setReplyTitle(isset($args["title"]) ? (int)$args["title"] : "");
-        $replyData->setReplyComment(isset($args["message"]) ? (int)$args["message"] : "");
-        $replyData->setUserName(isset($args["nickname"]) ? (int)$args["nickname"] : "");
-        $replyData->setWebsite(isset($args["website"]) ? (int)$args["website"] : "");
-        $replyData->setEmailAddress(isset($args["email"]) ? (int)$args["email"] : "");
+        $replyData->setReplyTitle(isset($args["title"]) ? $args["title"] : "");
+        $replyData->setReplyComment(isset($args["message"]) ? $args["message"] : "");
+        $replyData->setUserName(isset($args["nickname"]) ? $args["nickname"] : "");
+        $replyData->setWebsite(isset($args["website"]) ? $args["website"] : "");
+        $replyData->setEmailAddress(isset($args["email"]) ? $args["email"] : "");
 
         return $replyData;
     }

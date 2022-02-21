@@ -8,8 +8,6 @@ declare(strict_types=1);
 namespace Lof\ProductReviewsGraphQl\Model\DataProvider;
 
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
-use Magento\Review\Model\ResourceModel\Review\Collection as ReviewCollection;
-use Magento\Review\Model\ResourceModel\Review\Product\Collection as ProductCollection;
 use Lof\ProductReviewsGraphQl\Mapper\ReviewDataMapper;
 use Lof\ProductReviews\Api\Data\ReviewDataInterface;
 
@@ -61,11 +59,18 @@ class AggregatedReviewsDataProvider
             );
         }
 
-        $detailedSummary = null;
         $items = [];
         foreach ($reviewsCollection->getItems() as $reviewItem) {
             $items[] = $this->reviewDataMapper->map($reviewItem);
         }
+        $detailedSummary = $reviewsCollection->getDetailedSummary();
+        $detailed = [
+            "one" => $detailedSummary ? $detailedSummary->getOne() : 0,
+            "two" => $detailedSummary ? $detailedSummary->getTwo() : 0,
+            "three" => $detailedSummary ? $detailedSummary->getThree() : 0,
+            "four" => $detailedSummary ? $detailedSummary->getFour() : 0,
+            "five" => $detailedSummary ? $detailedSummary->getFive() : 0
+        ];
 
         return [
             'totalRecords' => $size,
@@ -73,13 +78,14 @@ class AggregatedReviewsDataProvider
             'ratingSummaryValue' => $reviewsCollection->getRatingSummaryValue(),
             'recomendedPercent' => $reviewsCollection->getRecomendedPercent(),
             'totalRecordsFiltered' => $reviewsCollection->getTotalFound(),
-            'detailedSummary' => $detailedSummary,
+            'detailedSummary' => $detailed,
             'items' => $items,
             'page_info' => [
                 'page_size' => $pageSize,
                 'current_page' => $currentPage,
                 'total_pages' => $maxPages
-            ]
+            ],
+            'model' => $reviewsCollection
         ];
     }
 }

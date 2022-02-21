@@ -23,7 +23,7 @@ class ReviewDataMapper
     /**
      * @param ReviewCommentDataMapper $ReviewCommentDataMapper
      */
-    public function __construct(ReviewDataMapper $reviewCommentDataMapper)
+    public function __construct(ReviewCommentDataMapper $reviewCommentDataMapper)
     {
         $this->reviewCommentDataMapper = $reviewCommentDataMapper;
     }
@@ -86,6 +86,7 @@ class ReviewDataMapper
             'guest_email' => $review->getGuestEmail(),
             'plus_review' => $review->getPlusReview(),
             'minus_review' => $review->getMinusReview(),
+            'report_abuse' => $review->getReportAbuse(),
             'rating_votes' => $rating_votes,
             'images' => $images,
             'comments' => $comments,

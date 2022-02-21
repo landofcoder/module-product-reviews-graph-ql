@@ -52,6 +52,7 @@ query {
         items {
             id
             uid
+            sku
             advreview (
                 search: $search
                 pageSize: $pageSize
@@ -88,6 +89,85 @@ query {
                     guest_email
                     plus_review
                     minus_review
+                    report_abuse
+                    rating_votes {
+                        __typename
+                        vote_id
+                        option_id
+                        rating_id
+                        review_id
+                        percent
+                        value
+                        rating_code
+                    }
+                    images {
+                        __typename
+                        full_path
+                        resized_path
+                    }
+                    comments {
+                        __typename
+                        id
+                        review_id
+                        status
+                        message
+                        nickname
+                        email
+                        created_at
+                        updated_at
+                    }
+                }
+            }
+        }
+    }
+}
+```
+
+Example:
+
+```
+query {
+    products(filter: { url_key: { eq: "pp-009238562599" } }) {
+        items {
+            id
+            uid
+            advreview (
+                search: ""
+                pageSize: 10
+                currentPage: 1
+                sortBy: helpful
+            ) {
+                __typename
+                totalRecords
+                ratingSummary
+                ratingSummaryValue
+                recomendedPercent
+                totalRecordsFiltered
+                detailedSummary {
+                    __typename
+                    one
+                    two
+                    three
+                    four
+                    five
+                }
+                items {
+                    __typename
+                    review_id
+                    created_at
+                    answer
+                    verified_buyer
+                    is_recommended
+                    detail_id
+                    title
+                    detail
+                    nickname
+                    like_about
+                    not_like_about
+                    guest_email
+                    plus_review
+                    minus_review
+                    report_abuse
                     rating_votes {
                         __typename
                         vote_id
@@ -158,18 +238,14 @@ query {
 
 ```
 mutation {
-    likeReview (review_id : Int!) {
-        __typename
-    }
+    likeReview (review_id : Int!)
 }
 ```
 4. Mutation submit unlike a review
 
 ```
 mutation {
-    unlikeReview (review_id : Int!) {
-        __typename
-    }
+    unlikeReview (review_id : Int!)
 }
 ```
 
@@ -177,9 +253,7 @@ mutation {
 
 ```
 mutation {
-    reportReview (review_id : Int!) {
-        __typename
-    }
+    reportReview (review_id : Int!)
 }
 ```
 
@@ -233,6 +307,33 @@ mutation {
             email: String
             parent_id: Int
             website: String
+        }
+    ) {
+        comment {
+            id
+            review_id
+            status
+            message
+            nickname
+            email
+            created_at
+            updated_at
+        }
+    }
+}
+```
+
+Example:
+
+```
+mutation {
+    createComment (
+        input: {
+            review_id: 348,
+            title: "Comment Title Graphql",
+            message: "New message for review from Graphql",
+            nickname: "Test User",
+            email: "testuser@gmail.com"
         }
     ) {
         comment {

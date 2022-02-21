@@ -47,7 +47,7 @@ class ReportReview implements ResolverInterface
     public function __construct(
         ReviewsConfig $reviewsConfig,
         AdvancedReviewHelper $advancedReviewHelper,
-        UnLikeRepositoryInterface $repository
+        ReportRepositoryInterface $repository
     ) {
         $this->reviewsConfig = $reviewsConfig;
         $this->advancedReviewHelper = $advancedReviewHelper;
