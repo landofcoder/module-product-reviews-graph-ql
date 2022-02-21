@@ -22,12 +22,13 @@ class SortFields implements ResolverInterface
     public function resolve(Field $field, $context, ResolveInfo $info, array $value = null, array $args = null)
     {
         $sortFieldsOptions = [
-            ['label' => "reply_id", 'value' => "reply_id"],
+            ['label' => "id", 'value' => "id"],
             ['label' => "review_id", 'value' => "review_id"],
-            ['label' => "reply_title", 'value' => "reply_title"],
-            ['label' => "user_name", 'value' => "user_name"],
-            ['label' => "parent_reply_id", 'value' => "parent_reply_id"],
-            ['label' => "created_at", 'value' => "created_at"]
+            ['label' => "parent_id", 'value' => "parent_id"],
+            ['label' => "title", 'value' => "title"],
+            ['label' => "nickname", 'value' => "nickname"],
+            ['label' => "created_at", 'value' => "created_at"],
+            ['label' => "updated_at", 'value' => "updated_at"]
         ];
 
         $data = [

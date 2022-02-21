@@ -63,9 +63,9 @@ class AggregatedReviewsDataProvider
 
         $detailedSummary = null;
         $items = [];
-        // foreach ($reviewsCollection->getItems() as $item) {
-        //     $items[] = $this->reviewDataMapper->map($item);
-        // }
+        foreach ($reviewsCollection->getItems() as $reviewItem) {
+            $items[] = $this->reviewDataMapper->map($reviewItem);
+        }
 
         return [
             'totalRecords' => $size,

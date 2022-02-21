@@ -33,7 +33,6 @@ class Reviews implements ResolverInterface
      */
     private $helperData;
 
-
     /**
      * @param GetProductReviewsInterface $repository
      * @param AggregatedReviewsDataProvider $aggregatedReviewsDataProvider

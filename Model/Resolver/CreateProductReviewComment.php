@@ -10,15 +10,19 @@ namespace Lof\ProductReviewsGraphQl\Model\Resolver;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Exception\GraphQlAuthorizationException;
 use Magento\Framework\GraphQl\Exception\GraphQlNoSuchEntityException;
+use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Query\Resolver\ContextInterface;
 use Magento\Framework\GraphQl\Query\Resolver\Value;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\Review\Helper\Data as ReviewHelper;
 use Magento\Review\Model\Review\Config as ReviewsConfig;
-use Magento\ReviewGraphQl\Mapper\ReviewDataMapper;
-use Magento\ReviewGraphQl\Model\Review\AddReviewToProduct;
-use Magento\Store\Api\Data\StoreInterface;
+use Magento\CustomerGraphQl\Model\Customer\GetCustomer;
+use Lof\ProductReviewsGraphQl\Mapper\ReviewCommentDataMapper;
+use Lof\ProductReviews\Helper\Data as AdvancedReviewHelper;
+use Lof\ProductReviews\Api\ReviewRepositoryInterface;
+use Lof\ProductReviews\Api\Data\ReplyInterfaceFactory;
+use Lof\ProductReviews\Api\Data\ReplyInterface;
 
 /**
  * Create product review reply resolver
@@ -31,14 +35,24 @@ class CreateProductReviewComment implements ResolverInterface
     private $reviewHelper;
 
     /**
-     * @var AddReviewToProduct
+     * @var ReplyInterfaceFactory
      */
-    private $addReviewToProduct;
+    private $dataReplyFactory;
 
     /**
-     * @var ReviewDataMapper
+     * @var AdvancedReviewHelper
      */
-    private $reviewDataMapper;
+    private $advancedReviewHelper;
+
+    /**
+     * @var ReviewRepositoryInterface
+     */
+    private $repository;
+
+    /**
+     * @var ReviewCommentDataMapper
+     */
+    private $reviewCommentDataMapper;
 
     /**
      * @var ReviewsConfig
@@ -46,22 +60,36 @@ class CreateProductReviewComment implements ResolverInterface
     private $reviewsConfig;
 
     /**
-     * @param AddReviewToProduct $addReviewToProduct
-     * @param ReviewDataMapper $reviewDataMapper
+     * @var GetCustomer
+     */
+    private $getCustomer;
+
+    /**
+     * @param ReviewRepositoryInterface $repository
+     * @param ReviewCommentDataMapper $reviewCommentDataMapper
      * @param ReviewHelper $reviewHelper
      * @param ReviewsConfig $reviewsConfig
+     * @param AdvancedReviewHelper $advancedReviewHelper
+     * @param ReplyInterfaceFactory $dataReplyFactory
+     * @param GetCustomer $getCustomer
      */
     public function __construct(
-        AddReviewToProduct $addReviewToProduct,
-        ReviewDataMapper $reviewDataMapper,
+        ReviewRepositoryInterface $repository,
+        ReviewCommentDataMapper $reviewCommentDataMapper,
         ReviewHelper $reviewHelper,
-        ReviewsConfig $reviewsConfig
+        ReviewsConfig $reviewsConfig,
+        AdvancedReviewHelper $advancedReviewHelper,
+        ReplyInterfaceFactory $dataReplyFactory,
+        GetCustomer $getCustomer
     ) {
 
-        $this->addReviewToProduct = $addReviewToProduct;
-        $this->reviewDataMapper = $reviewDataMapper;
+        $this->repository = $repository;
+        $this->reviewCommentDataMapper = $reviewCommentDataMapper;
         $this->reviewHelper = $reviewHelper;
         $this->reviewsConfig = $reviewsConfig;
+        $this->advancedReviewHelper = $advancedReviewHelper;
+        $this->dataReplyFactory = $dataReplyFactory;
+        $this->getCustomer = $getCustomer;
     }
 
     /**
@@ -87,12 +115,16 @@ class CreateProductReviewComment implements ResolverInterface
         array $value = null,
         array $args = null
     ) {
-        if (false === $this->reviewsConfig->isEnabled()) {
+        if (false === $this->reviewsConfig->isEnabled() || false === $this->advancedReviewHelper->isEnabled()) {
             throw new GraphQlAuthorizationException(__('Creating product reviews are not currently available.'));
         }
 
         $input = $args['input'];
         $customerId = null;
+
+        if (empty($input['input']) || empty($input['input']['review_id']) || empty($input['input']['message'])) {
+            throw new GraphQlInputException(__('Value must contain "input", input.review_id, input.message property.'));
+        }
 
         if (false !== $context->getExtensionAttributes()->getIsCustomer()) {
             $customerId = (int) $context->getUserId();
@@ -102,17 +134,36 @@ class CreateProductReviewComment implements ResolverInterface
             throw new GraphQlAuthorizationException(__('Guest customers aren\'t allowed to add product reviews.'));
         }
 
-        $sku = $input['sku'];
-        $ratings = $input['ratings'];
-        $data = [
-            'nickname' => $input['nickname'],
-            'title' => $input['summary'],
-            'detail' => $input['text'],
-        ];
-        /** @var StoreInterface $store */
-        $store = $context->getExtensionAttributes()->getStore();
-        $review = $this->addReviewToProduct->execute($data, $ratings, $sku, $customerId, (int) $store->getId());
+        $replyData = $this->mappingReplyData($args["input"], $customerId);
 
-        return ['review' => $this->reviewDataMapper->map($review)];
+        if ($customerId) {
+            $customer = $this->getCustomer->execute($context);
+            $replyData->setEmailAddress($customer->getEmail());
+            $replyDataResponse = $this->repository->replyByCustomer($customerId, $replyData);
+        } else {
+            $replyDataResponse = $this->repository->replyByGuest($replyData);
+        }
+
+        return ['comment' => $this->reviewCommentDataMapper->map($replyDataResponse)];
+    }
+
+    /**
+     * mapping reply data
+     *
+     * @param mixed $args
+     * @return ReplyInterface
+     */
+    protected function mappingReplyData($args): ReplyInterface
+    {
+        $replyData = $this->dataReplyFactory->create();
+        $replyData->setReviewId(isset($args["review_id"]) ? (int)$args["review_id"] : 0);
+        $replyData->setParentReplyId(isset($args["parent_id"]) ? (int)$args["parent_id"] : 0);
+        $replyData->setReplyTitle(isset($args["title"]) ? (int)$args["title"] : "");
+        $replyData->setReplyComment(isset($args["message"]) ? (int)$args["message"] : "");
+        $replyData->setUserName(isset($args["nickname"]) ? (int)$args["nickname"] : "");
+        $replyData->setWebsite(isset($args["website"]) ? (int)$args["website"] : "");
+        $replyData->setEmailAddress(isset($args["email"]) ? (int)$args["email"] : "");
+
+        return $replyData;
     }
 }
