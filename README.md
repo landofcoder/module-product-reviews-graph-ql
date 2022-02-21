@@ -40,11 +40,11 @@ magento 2 product reviews graphql extension
 
 1. Query get product advanced reviews
 
-$urlKey : String - product url key
-$search : String - filter by keyword
-$pageSize : Int = 20 - page size
-$currentPage : Int = 1 - current page
-$sortBy : ReviewSortingType = default - enum: default, helpful, rating, latest, oldest, recommended, verified
+* $urlKey : String - product url key
+* $search : String - filter by keyword
+* $pageSize : Int = 20 - page size
+* $currentPage : Int = 1 - current page
+* $sortBy : ReviewSortingType = default - enum: default, helpful, rating, latest, oldest, recommended, verified
 
 ```
 query {
