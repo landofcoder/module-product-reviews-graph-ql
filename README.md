@@ -261,7 +261,7 @@ mutation {
 
 ```
 mutation {
-    createProductReview (
+    createProductAdvReview (
         input: {
             sku: String!
             nickname: String!

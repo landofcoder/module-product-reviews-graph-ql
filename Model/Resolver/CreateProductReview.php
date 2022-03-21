@@ -9,7 +9,7 @@ namespace Lof\ProductReviewsGraphQl\Model\Resolver;
 
 use Lof\ProductReviews\Api\PostProductReviewsInterface;
 use Lof\ProductReviews\Api\Data\ReviewInterface;
-use Lof\ProductReviews\Api\Data\ReviewInterfaceFactory;
+use Lof\ProductReviews\Model\Converter\RatingVote as RatingConverter;
 use Lof\ProductReviews\Model\Converter\Review as ReviewConverter;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Exception\GraphQlAuthorizationException;
@@ -20,8 +20,6 @@ use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\Review\Helper\Data as ReviewHelper;
 use Magento\Review\Model\Review\Config as ReviewsConfig;
-use Magento\ReviewGraphQl\Mapper\ReviewDataMapper;
-use Magento\ReviewGraphQl\Model\Review\AddReviewToProduct;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\CustomerGraphQl\Model\Customer\GetCustomer;
 
@@ -36,16 +34,6 @@ class CreateProductReview implements ResolverInterface
     private $reviewHelper;
 
     /**
-     * @var AddReviewToProduct
-     */
-    private $addReviewToProduct;
-
-    /**
-     * @var ReviewDataMapper
-     */
-    private $reviewDataMapper;
-
-    /**
      * @var ReviewsConfig
      */
     private $reviewsConfig;
@@ -54,11 +42,6 @@ class CreateProductReview implements ResolverInterface
      * @var PostProductReviewsInterface
      */
     private $repository;
-
-    /**
-     * @var ReviewInterfaceFactory
-     */
-    private $reviewDataFactory;
 
     /**
      * @var GetCustomer
@@ -71,34 +54,32 @@ class CreateProductReview implements ResolverInterface
     private $reviewConverter;
 
     /**
-     * @param AddReviewToProduct $addReviewToProduct
-     * @param ReviewDataMapper $reviewDataMapper
+     * @var RatingConverter
+     */
+    private $ratingConverter;
+
+    /**
      * @param ReviewHelper $reviewHelper
      * @param ReviewsConfig $reviewsConfig
      * @param PostProductReviewsInterface $repository
-     * @param ReviewInterfaceFactory $reviewDataFactory
      * @param GetCustomer $getCustomer
      * @param ReviewConverter $reviewConverter
+     * @param RatingConverter $ratingConverter
      */
     public function __construct(
-        AddReviewToProduct $addReviewToProduct,
-        ReviewDataMapper $reviewDataMapper,
         ReviewHelper $reviewHelper,
         ReviewsConfig $reviewsConfig,
         PostProductReviewsInterface $repository,
-        ReviewInterfaceFactory $reviewDataFactory,
         GetCustomer $getCustomer,
-        ReviewConverter $reviewConverter
+        ReviewConverter $reviewConverter,
+        RatingConverter $ratingConverter
     ) {
-
-        $this->addReviewToProduct = $addReviewToProduct;
-        $this->reviewDataMapper = $reviewDataMapper;
         $this->reviewHelper = $reviewHelper;
         $this->reviewsConfig = $reviewsConfig;
         $this->repository = $repository;
-        $this->reviewDataFactory = $reviewDataFactory;
         $this->getCustomer = $getCustomer;
         $this->reviewConverter = $reviewConverter;
+        $this->ratingConverter = $ratingConverter;
     }
 
     /**
@@ -157,6 +138,25 @@ class CreateProductReview implements ResolverInterface
             'stores' => [ 0, $store->getId() ],
             'images' => []
         ];
+        $data = $this->mappingGallery($images, $data);
+        $reviewDataObject = $this->reviewConverter->arrayToDataModel($data);
+        $listRatings = $this->mappingRatings($ratings);
+        $reviewDataObject->setRatings($listRatings);
+        /** @var ReviewInterface $review */
+        $review = $this->repository->execute($customerId, $sku, $reviewDataObject);
+
+        return ['review' => $review];
+    }
+
+    /**
+     * mapping gallery images
+     *
+     * @param mixed|array $images
+     * @param mixed|array $data
+     * @return mixed|array
+     */
+    protected function mappingGallery($images, $data)
+    {
         if (!empty($images)) {
             $tmpImages = [];
             foreach ($images as $_image) {
@@ -169,13 +169,21 @@ class CreateProductReview implements ResolverInterface
             }
             $data["images"] = $tmpImages;
         }
+        return $data;
+    }
 
-        $listRatings = $this->convertListRatings($ratings);
-
-        $reviewDataObject = $this->reviewConverter->arrayToDataModel($data);
-        /** @var ReviewInterface $review */
-        $review = $this->repository->execute($customerId, $sku, $reviewDataObject);
-
-        return ['review' => $review];
+    /**
+     * mapping review ratings
+     *
+     * @param mixed|array $ratings
+     * @return \Lof\ProductReviews\Api\Data\RatingVoteInterface[]
+     */
+    protected function mappingRatings($ratings)
+    {
+        $listRatings = [];
+        foreach ($ratings as $rating) {
+            $listRatings[] = $this->ratingConverter->arrayToDataModel($rating);
+        }
+        $listRatings;
     }
 }
