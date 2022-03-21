@@ -11,6 +11,7 @@ use Lof\ProductReviews\Api\PostProductReviewsInterface;
 use Lof\ProductReviews\Api\Data\ReviewInterface;
 use Lof\ProductReviews\Model\Converter\RatingVote as RatingConverter;
 use Lof\ProductReviews\Model\Converter\Review as ReviewConverter;
+use Lof\ProductReviewsGraphQl\Mapper\ReviewDataMapper;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Exception\GraphQlAuthorizationException;
 use Magento\Framework\GraphQl\Exception\GraphQlNoSuchEntityException;
@@ -59,12 +60,18 @@ class CreateProductReview implements ResolverInterface
     private $ratingConverter;
 
     /**
+     * @var ReviewDataMapper
+     */
+    private $reviewDataMapper;
+
+    /**
      * @param ReviewHelper $reviewHelper
      * @param ReviewsConfig $reviewsConfig
      * @param PostProductReviewsInterface $repository
      * @param GetCustomer $getCustomer
      * @param ReviewConverter $reviewConverter
      * @param RatingConverter $ratingConverter
+     * @param ReviewDataMapper $reviewDataMapper
      */
     public function __construct(
         ReviewHelper $reviewHelper,
@@ -72,7 +79,8 @@ class CreateProductReview implements ResolverInterface
         PostProductReviewsInterface $repository,
         GetCustomer $getCustomer,
         ReviewConverter $reviewConverter,
-        RatingConverter $ratingConverter
+        RatingConverter $ratingConverter,
+        ReviewDataMapper $reviewDataMapper
     ) {
         $this->reviewHelper = $reviewHelper;
         $this->reviewsConfig = $reviewsConfig;
@@ -80,6 +88,7 @@ class CreateProductReview implements ResolverInterface
         $this->getCustomer = $getCustomer;
         $this->reviewConverter = $reviewConverter;
         $this->ratingConverter = $ratingConverter;
+        $this->reviewDataMapper = $reviewDataMapper;
     }
 
     /**
@@ -145,7 +154,7 @@ class CreateProductReview implements ResolverInterface
         /** @var ReviewInterface $review */
         $review = $this->repository->execute($customerId, $sku, $reviewDataObject);
 
-        return ['review' => $review];
+        return ['review' => $this->reviewDataMapper->map($review)];
     }
 
     /**
