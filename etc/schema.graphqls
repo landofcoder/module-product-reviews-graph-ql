@@ -106,9 +106,6 @@ type ReviewComments {
 }
 
 type Query {
-
-    ratings: ReviewRatings @resolver(class: "\\Lof\\ProductReviewsGraphQl\\Model\\Resolver\\GetRatings") @doc(description: "The query get available product ratings list.")
-
     comments(
         review_id: Int! @doc(description: "filter by review id.")
         filter: ReviewCommentFilterInput @doc(description: "Identifies which question attributes to search for and return.")
@@ -197,14 +194,6 @@ enum ReviewSortingType  @doc(description: "ReviewSortingType use for sorting adv
     oldest
     recommended
     verified
-}
-
-type ReviewRating {
-    rating_id: Int! @doc(description: "Rating ID")
-    rating_name: String! @doc(description: Rating Code")
-}
-type ReviewRatings @doc(description: "list review ratings") {
-    ratings: [ReviewRating] @doc(description: "list of Review Ratings for product entity.")
 }
 
 type StoreConfig @doc(description: "The type contains information about a store config") {
