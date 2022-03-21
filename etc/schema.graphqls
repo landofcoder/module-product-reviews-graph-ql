@@ -112,7 +112,7 @@ type Query {
         pageSize: Int = 5 @doc(description: "Specifies the maximum number of results to return at once. This attribute is optional.")
         currentPage: Int = 1 @doc(description: "Specifies which page of results to return. The default value is 1.")
         sort: ReviewCommentSortInput @doc(description: "Specifies which attributes to sort on, and whether to return the results in ascending or descending order.")
-   ):ReviewComments @resolver(class: "\\Lof\\ProductReviewsGraphQl\\Model\\Resolver\\Product\\Review\\Comments") @doc(description: "The seller query searches for sellers that match the criteria specified in the search and filter attributes")
+   ):ReviewComments @resolver(class: "\\Lof\\ProductReviewsGraphQl\\Model\\Resolver\\Product\\Review\\Comments") @doc(description: "The review comment query searches for comments that match the criteria specified in the search and filter attributes")
 }
 
 type Mutation {
@@ -123,10 +123,16 @@ type Mutation {
     unlikeReview(review_id: Int!): Boolean @doc(description: "Un Like a review by id") @resolver(class: "\\Lof\\ProductReviewsGraphQl\\Model\\Resolver\\UnLikeReview")
 
     reportReview(review_id: Int!): Boolean @doc(description: "Report a review by id") @resolver(class: "\\Lof\\ProductReviewsGraphQl\\Model\\Resolver\\ReportReview")
+
+    createProductAdvReview(input: CreateProductAdvReviewInput!): CreateProductAdvReviewOutput! @doc(description: "Creates a product review for the specified SKU") @resolver(class: "Lof\\ProductReviewsGraphQl\\Model\\Resolver\\CreateProductReview")
 }
 
 type CreateProductReviewCommentOutput {
     comment: Comment! @doc(description: "Contains the completed product review comment")
+}
+
+type CreateProductAdvReviewOutput {
+    review: Review! @doc(description: "Contains the completed product review")
 }
 
 input CreateProductReviewCommentInput {
@@ -139,11 +145,22 @@ input CreateProductReviewCommentInput {
     email: String @doc(description: "email field")
 }
 
-input CreateProductReviewInput {
+input CreateProductAdvReviewInput {
+    sku: String! @doc(description: "The SKU of the reviewed product")
+    nickname: String! @doc(description: "The customer's nickname. Defaults to the customer name, if logged in")
+    summary: String! @doc(description: "The summary (title) of the review")
+    text: String! @doc(description: "The review text.")
+    ratings: [ProductAdvReviewRatingInput!]! @doc(description: "Ratings details by category. e.g price: 5, quality: 4 etc")
     email: String @doc(description: "The Email of the reviewed product")
     advantages: String @doc(description: "The advantages for product review")
     disadvantages: String @doc(description: "The disadvantages for product review")
     images: [ReviewGalleryImageInput] @doc(description: "The gallery image for product review")
+}
+
+input ProductAdvReviewRatingInput {
+    rating_id: Int @doc(description: "Rating Id.")
+    rating_name: String! @doc(description: "A Rating Name: It is rating_code in table rating. Example Default rating_name: Quality, Value, Price, Rating")
+    value: Int! @doc(description: "A Rating number, from 1 to 5.")
 }
 
 input ReviewGalleryImageInput {
