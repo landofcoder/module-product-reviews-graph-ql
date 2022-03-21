@@ -267,7 +267,7 @@ mutation {
             nickname: String!
             summary: String!
             text: String!
-            ratings: [ProductReviewRatingInput!]!
+            ratings: [ProductAdvReviewRatingInput!]!
             email: String
             advantages: String
             disadvantages: String
@@ -276,21 +276,67 @@ mutation {
     ) {
         review {
             review_id
-            average_rating
             created_at
+            answer
+            verified_buyer
+            is_recommended
+            detail_id
+            title
+            detail
             nickname
-            product {
-                id
-                url_key
-            }
-            ratings_breakdown {
-                name
+            like_about
+            not_like_about
+            guest_email
+            plus_review
+            minus_review
+            report_abuse
+            rating_votes {
+                __typename
+                vote_id
+                option_id
+                rating_id
+                review_id
+                percent
                 value
+                rating_code
             }
-            summary
-            text
+            images {
+                __typename
+                full_path
+                resized_path
+            }
+            comments {
+                __typename
+                id
+                review_id
+                status
+                message
+                nickname
+                email
+                created_at
+                updated_at
+            }
         }
     }
+}
+```
+
+- ProductAdvReviewRatingInput:
+
+```
+input ProductAdvReviewRatingInput {
+    rating_name: String!
+    value: Int!
+}
+```
+rating_name: A Rating Name: It is rating_code in table rating. Example Default rating_name: Quality, Value, Price, Rating
+value: A Rating number, from 1 to 5.
+
+- ReviewGalleryImageInput:
+
+```
+input ReviewGalleryImageInput {
+    src: String
 }
 ```
 
