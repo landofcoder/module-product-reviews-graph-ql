@@ -106,13 +106,16 @@ type ReviewComments {
 }
 
 type Query {
+
+    ratings: ReviewRatings @resolver(class: "\\Lof\\ProductReviewsGraphQl\\Model\\Resolver\\GetRatings") @doc(description: "The query get available product ratings list.")
+
     comments(
         review_id: Int! @doc(description: "filter by review id.")
         filter: ReviewCommentFilterInput @doc(description: "Identifies which question attributes to search for and return.")
         pageSize: Int = 5 @doc(description: "Specifies the maximum number of results to return at once. This attribute is optional.")
         currentPage: Int = 1 @doc(description: "Specifies which page of results to return. The default value is 1.")
         sort: ReviewCommentSortInput @doc(description: "Specifies which attributes to sort on, and whether to return the results in ascending or descending order.")
-   ):ReviewComments @resolver(class: "\\Lof\\ProductReviewsGraphQl\\Model\\Resolver\\Product\\Review\\Comments") @doc(description: "The seller query searches for sellers that match the criteria specified in the search and filter attributes")
+   ):ReviewComments @resolver(class: "\\Lof\\ProductReviewsGraphQl\\Model\\Resolver\\Product\\Review\\Comments") @doc(description: "The review comment query searches for comments that match the criteria specified in the search and filter attributes")
 }
 
 type Mutation {
@@ -194,6 +197,14 @@ enum ReviewSortingType  @doc(description: "ReviewSortingType use for sorting adv
     oldest
     recommended
     verified
+}
+
+type ReviewRating {
+    rating_id: Int! @doc(description: "Rating ID")
+    rating_name: String! @doc(description: Rating Code")
+}
+type ReviewRatings @doc(description: "list review ratings") {
+    ratings: [ReviewRating] @doc(description: "list of Review Ratings for product entity.")
 }
 
 type StoreConfig @doc(description: "The type contains information about a store config") {
