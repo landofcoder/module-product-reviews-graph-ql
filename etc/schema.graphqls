@@ -158,6 +158,7 @@ input CreateProductAdvReviewInput {
 }
 
 input ProductAdvReviewRatingInput {
+    rating_id: Int @doc(description: "Rating Id.")
     rating_name: String! @doc(description: "A Rating Name: It is rating_code in table rating. Example Default rating_name: Quality, Value, Price, Rating")
     value: Int! @doc(description: "A Rating number, from 1 to 5.")
 }

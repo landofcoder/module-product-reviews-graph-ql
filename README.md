@@ -325,6 +325,7 @@ mutation {
 
 ```
 input ProductAdvReviewRatingInput {
+    rating_id: Int
     rating_name: String!
     value: Int!
 }

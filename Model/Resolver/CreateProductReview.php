@@ -145,12 +145,13 @@ class CreateProductReview implements ResolverInterface
             'not_like_about' => isset($input['disadvantages']) ? $input['disadvantages'] : '',
             'store_id' => $store->getId(),
             'stores' => [ 0, $store->getId() ],
+            'ratings' => $ratings,
             'images' => []
         ];
         $data = $this->mappingGallery($images, $data);
         $reviewDataObject = $this->reviewConverter->arrayToDataModel($data);
-        $listRatings = $this->mappingRatings($ratings);
-        $reviewDataObject->setRatings($listRatings);
+        //$listRatings = $this->mappingRatings($ratings);
+        //$reviewDataObject->setRatings($listRatings);
         /** @var ReviewInterface $review */
         $review = $this->repository->execute($customerId, $sku, $reviewDataObject);
 
