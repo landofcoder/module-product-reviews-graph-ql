@@ -119,7 +119,7 @@ class CreateProductReview implements ResolverInterface
         }
 
         $input = $args['input'];
-        $customerId = null;
+        $customerId = 0;
 
         if (false !== $context->getExtensionAttributes()->getIsCustomer()) {
             $customerId = (int) $context->getUserId();
