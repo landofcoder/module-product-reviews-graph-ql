@@ -89,7 +89,7 @@ class Comments implements ResolverInterface
         array $value = null,
         array $args = null
     ) {
-        if (false === $this->reviewsConfig->isEnabled() || false === $this->advancedReviewHelper->isEnabled()) {
+        if (false === $this->advancedReviewHelper->isEnabled() || false === $this->advancedReviewHelper->isEnabled()) {
             throw new GraphQlAuthorizationException(__('get product review comments are not currently available.'));
         }
 
@@ -113,8 +113,12 @@ class Comments implements ResolverInterface
             }
             $args["sort"] = $tmpSort;
         }
-        $store = $context->getExtensionAttributes()->getStore();
-        $args[Filter::ARGUMENT_NAME] = $this->formatMatchFilters($args['filters'], $store);
+        if (isset($args['filter'])) {
+            $store = $context->getExtensionAttributes()->getStore();
+            $args[Filter::ARGUMENT_NAME] = $this->formatMatchFilters($args['filter'], $store);
+        }else {
+            $args[Filter::ARGUMENT_NAME] = [];
+        }
 
         $searchCriteria = $this->searchCriteriaBuilder->build('productReviewReplies', $args);
         $searchCriteria->setCurrentPage($args['currentPage']);
@@ -155,7 +159,7 @@ class Comments implements ResolverInterface
             ScopeInterface::SCOPE_STORE,
             $store
         );
-        $availableMatchFilters = ["order_id", "store_id"];
+        $availableMatchFilters = ["store_id"];
         foreach ($filters as $filter => $condition) {
             $filter = $this->mappingCommentField($filter);
             $conditionType = current(array_keys($condition));

@@ -62,10 +62,10 @@ class RepliesFilterAttributesForAst implements FieldEntityAttributesInterface
      */
     public function getEntityAttributes() : array
     {
-        $transactionFilterType = $this->config->getConfigElement('ReviewReplyFilterInput');
+        $transactionFilterType = $this->config->getConfigElement('ReviewCommentFilterInput');
         /** @phpstan-ignore-next-line */
         if (!$transactionFilterType) {
-            throw new \LogicException(__("ReviewReplyFilterInput type not defined in schema."));
+            throw new \LogicException(__("ReviewCommentFilterInput type not defined in schema."));
         }
 
         $fields = [];
