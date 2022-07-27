@@ -29,6 +29,7 @@ class ReviewCommentDataMapper
             'id' => $reply->getReplyId(),
             'review_id' => $reply->getReviewId(),
             'parent_id' => $reply->getParentReplyId(),
+            'title' => $reply->getReplyTitle(),
             'message' => $reply->getReplyComment(),
             'nickname' => $reply->getUserName(),
             'email' => $reply->getEmailAddress(),

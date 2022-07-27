@@ -72,6 +72,7 @@ type Comment {
     id: Int @doc(description: "comment id, reply id")
     review_id: Int @doc(description: "review_id field")
     parent_id: Int @doc(description: "parent_id field")
+    title: String @doc(description: "title field")
     message: String @doc(description: "message field")
     nickname: String @doc(description: "nickname field")
     email: String @doc(description: "email field")
