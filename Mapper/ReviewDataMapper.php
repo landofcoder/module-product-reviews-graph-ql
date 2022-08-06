@@ -87,6 +87,7 @@ class ReviewDataMapper
             'plus_review' => $review->getPlusReview(),
             'minus_review' => $review->getMinusReview(),
             'report_abuse' => $review->getReportAbuse(),
+            'entity_pk_value' => $review->getEntityPkValue(),
             'rating_votes' => $rating_votes,
             'images' => $images,
             'comments' => $comments,
