@@ -396,3 +396,93 @@ mutation {
     }
 }
 ```
+
+8. Get logged in customer reviews
+
+Query:
+
+```
+{
+  customer {
+    advreviews(
+      filter: {
+      }
+      pageSize: 5
+      currentPage: 1
+    ) {
+      items {
+        review_id
+        entity_pk_value
+        created_at
+        answer
+        verified_buyer
+        is_recommended
+        detail_id
+        title
+        detail
+        nickname
+        like_about
+        not_like_about
+        guest_email
+        plus_review
+        minus_review
+        report_abuse
+        rating_votes {
+          __typename
+          vote_id
+          option_id
+          rating_id
+          review_id
+          percent
+          value
+          rating_code
+        }
+        images {
+          __typename
+          full_path
+          resized_path
+        }
+        comments {
+          __typename
+          id
+          review_id
+          status
+          message
+          nickname
+          email
+          created_at
+          updated_at
+        }
+      }
+      page_info {
+        page_size
+        current_page
+        total_pages
+      }
+      total_count
+    }
+  }
+}
+```
+
+Filter fields:
+
+```
+review_id
+created_at
+title
+detail
+nickname
+entity_pk_value
+```
+
+Sort fields:
+
+```
+review_id
+created_at
+title
+detail
+nickname
+entity_pk_value
+```

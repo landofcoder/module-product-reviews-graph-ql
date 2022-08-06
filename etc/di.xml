@@ -5,6 +5,7 @@
         <arguments>
             <argument name="attributesInstances" xsi:type="array">
                 <item name="productReviewReplies" xsi:type="object">Lof\ProductReviewsGraphQl\Model\ProductReviewComment\RepliesFilterAttributesForAst</item>
+                <item name="myAdvreviews" xsi:type="object">Lof\ProductReviewsGraphQl\Model\Reviews\FilterArgumentReviews</item>
             </argument>
         </arguments>
     </type>

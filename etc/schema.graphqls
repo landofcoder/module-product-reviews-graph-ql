@@ -52,6 +52,7 @@ type Review @doc(description: "Details of a product review") {
     plus_review: Int @doc(description: "plus_review field.")
     minus_review: Int @doc(description: "plus_review field.")
     report_abuse: Int @doc(description: "report_abuse field.")
+    entity_pk_value: Int @doc(description: "entity_pk_value field.")
     rating_votes: [RatingVote] @doc(description: "rating_votes field.")
     images: [Images] @doc(description: "images field.")
     comments: [Comment] @doc(description: "review comment, review reply list, field.")
@@ -61,6 +62,29 @@ type Reviews @doc(description: "Details of a product reviews") {
     items: [Review]! @doc(description: "An array of product reviews.")
     total_count: Int @doc(description: "The number of items returned")
     page_info: SearchResultPageInfo @doc(description: "An object that includes the page_info and currentPage values specified in the query.")
+    sort_fields: SortFields @doc(description: "An object that includes the default sort field and all available sort fields.") @resolver(class: "Lof\\ProductReviewsGraphQl\\Model\\Resolver\\Product\\Review\\SortFields")
+}
+
+input ReviewFilterInput @doc(description: "ReviewFilterInput defines the filters to be used in the search. A filter contains at least one attribute, a comparison operator, and the value that is being searched for.")
+{
+    review_id: FilterTypeInput @doc(description: "Filterr review_id field.")
+    created_at: FilterTypeInput @doc(description: "Filter created_at field.")
+    detail_id: FilterTypeInput @doc(description: "Filter detail_id field.")
+    title: FilterTypeInput @doc(description: "Filter title field.")
+    detail: FilterTypeInput @doc(description: "Filter detail field.")
+    nickname: FilterTypeInput @doc(description: "Filter nickname field.")
+    entity_pk_value: FilterTypeInput @doc(description: "Filter entity_pk_value - product ID field.")
+}
+
+input ReviewSortInput @doc(description: "ReviewSortInput specifies the attribute to use for sorting search results and indicates whether the results are sorted in ascending or descending delivery persons. It's possible to sort delivery persons using searchable attributes with enabled 'Use in Filter Options' option")
+{
+    review_id: SortEnum @doc(description: "Sort by the review_id.")
+    nickname: SortEnum @doc(description: "Sort by the nickname.")
+    created_at: SortEnum @doc(description: "Sort by the created_at (default).")
+    detail_id: SortEnum @doc(description: "Sort by the detail_id.")
+    detail: SortEnum @doc(description: "Sort by the detail.")
+    title: SortEnum @doc(description: "Sort by the title.")
+    entity_pk_value: SortEnum @doc(description: "Sort by the entity_pk_value.")
 }
 
 type Images {
@@ -126,6 +150,15 @@ type Mutation {
     reportReview(review_id: Int!): Boolean @doc(description: "Report a review by id") @resolver(class: "\\Lof\\ProductReviewsGraphQl\\Model\\Resolver\\ReportReview")
 
     createProductAdvReview(input: CreateProductAdvReviewInput!): CreateProductAdvReviewOutput! @doc(description: "Creates a product review for the specified SKU") @resolver(class: "Lof\\ProductReviewsGraphQl\\Model\\Resolver\\CreateProductReview")
+}
+
+type Customer {
+    advreviews(
+        filter: ReviewFilterInput @doc(description: "Identifies which review attributes to search for and return.")
+        pageSize: Int = 5 @doc(description: "Specifies the maximum number of results to return at once. This attribute is optional.")
+        currentPage: Int = 1 @doc(description: "Specifies which page of results to return. The default value is 1.")
+        sort: ReviewSortInput @doc(description: "Specifies which attributes to sort on, and whether to return the results in ascending or descending order.")
+   ):Reviews @resolver(class: "\\Lof\\ProductReviewsGraphQl\\Model\\Resolver\\Customer\\Reviews") @doc(description: "The reviews query searches for comments that match the criteria specified in the search and filter attributes")
 }
 
 type CreateProductReviewCommentOutput {
